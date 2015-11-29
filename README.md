@@ -17,11 +17,13 @@ The token can be claimed from <code>/auth</code> endpoint by logging in.
 Send the acquired token as a <code>Authorzation: Bearer &lt;token&gt;</code> HTTP Header for
 the following endpoints.
 
-###/
+<hr />
+### /
 ###### GET (public)
 **returns** a html help page
 
-###/auth
+<hr />
+### /auth
 ###### POST (public)
 Works as an endpont for user authorization.
 
@@ -29,7 +31,8 @@ Works as an endpont for user authorization.
 
 **returns** an authorizaton token (JWT) in response.
 
-###/api/users
+<hr />
+### /api/users
 ###### GET (authorization required)
 **returns** all the users on the database.
 
@@ -49,7 +52,8 @@ The following parameters are available:
 | longitude | Number | no | User's current positional coordinates, lon |
 | following | List [] | no | A list of user id's the User is following |
 
-###/api/users/<id>
+<hr />
+### /api/users/[id]
 ###### GET (authorization required)
 **returns** a single user by <id>
 
