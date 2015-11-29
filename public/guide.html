@@ -1,0 +1,147 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+
+	<title>Orb API Guide Page</title>
+	<meta name="description" content="Orb API Guide Page">
+	<meta name="author" content="SitePoint">
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.css">
+
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="eight columns">
+
+				<h1>ORB API Endpoints</h1>
+
+				<hr />
+
+				<h2>Public Endpoints</h2>
+
+				<div>
+					<h4>POST /auth</h4>
+					<p>/auth works as an endpont for user authorization.</p>
+					<p>
+						Requires a username and password as x-www-form-urlencoded parameters.
+						Returns an authorizaton token as a JSON response.
+					</p>
+					<table class="u-full-width">
+					  <thead>
+					    <tr>
+					      <th>Parameter</th>
+					      <th>Value</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    <tr>
+					      <td>name</td>
+					      <td>username (String)</td>
+					    </tr>
+					    <tr>
+					      <td>password</td>
+					      <td>password (String)</td>
+					    </tr>
+					  </tbody>
+					</table>
+
+					<p>An example response:
+						<code>
+							{
+							  "success": true,
+							  "message": "You are tokenized!",
+							  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyOi..."
+							}
+						</code>
+					</p>
+
+				</div>
+
+				<h2>Authorized Endpoints</h2>
+
+				<p>
+					All authorized endpoints require an authorization token (JWT) for access. 
+					The token can be claimed from <code>/auth</code> endpoint by logging in.
+
+					Send the acquired token as a <code>Authorzation: Bearer &lt;token&gt;</code> HTTP Header for
+					the following endpoints.
+				</p>
+
+				<div>
+					<h4>GET /api</h4>
+					<p>API root.</p>
+				</div>
+					
+				<div>
+				<h4>GET /api/users/</h4>
+					<p>Returns all the users on the database. Currently no marshalling is done.</p>
+				</div>	
+
+
+				<div>
+					<h4>POST /api/users</h4>
+					<p>Creates a single user.</p>
+					<p>
+						Parameters need to be given as x-www-form-urlencoded type.
+					</p>
+					<table class="u-full-width">
+					  <thead>
+					    <tr>
+					      <th>Parameter</th>
+					      <th>Value</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    <tr>
+					      <td>name</td>
+					      <td>username (String)</td>
+					    </tr>
+					    <tr>
+					      <td>password</td>
+					      <td>password (String)</td>
+					    </tr>
+					    <tr>
+					      <td>age</td>
+					      <td>age (Number)</td>
+					    </tr>
+					    <tr>
+					      <td>gender</td>
+					      <td>male | female (String)</td>
+					    </tr>
+					    <tr>
+					      <td>note</td>
+					      <td>public note (String)</td>
+					    </tr>
+					    <tr>
+					      <td>latitude</td>
+					      <td>latitude coordinates (Number)</td>
+					    </tr>
+					    <tr>
+					      <td>longitude</td>
+					      <td>longitude coordinates (Number)</td>
+					    </tr>
+					  </tbody>
+					</table>
+
+					<p>An example response:
+						<code>
+							{
+							  "success": true
+							}
+						</code>
+					</p>
+
+				</div>
+
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
