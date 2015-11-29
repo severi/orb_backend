@@ -6,8 +6,9 @@ A RESTful express.js API for Orb
 Requires node.js and npm.
 
 1. Install packages ```npm install```
-2. Run Nodemon development server ```npm start```
-3. Go to localhost:8080/
+2. Install and setup mongodb, run ```mongod```
+3. Run Nodemon development server ```npm start```
+4. Go to localhost:8080/
 
 ## API Endpoints
 
