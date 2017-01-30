@@ -15,7 +15,7 @@ Requires node.js and npm.
 All authorized endpoints require an authorization token (JWT) for access. 
 The token can be claimed from <code>/auth</code> endpoint by logging in.
 
-Send the acquired token as a <code>Authorzation: Bearer &lt;token&gt;</code> HTTP Header for
+Send the acquired token as a <code>Authorization: Bearer &lt;token&gt;</code> HTTP Header for
 the following endpoints.
 
 <hr />
@@ -28,7 +28,7 @@ the following endpoints.
 ###### POST (public)
 Works as an endpont for user authorization.
 
-**parameters** *username*, *password* as x-www-form-urlencoded or json parameters are required.
+**parameters** *name*, *password* as x-www-form-urlencoded or json parameters are required.
 
 **returns** an authorizaton token (JWT) in response.
 
