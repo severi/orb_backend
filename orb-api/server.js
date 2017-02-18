@@ -10,10 +10,11 @@ var generalCtrl = require('./app/controllers/general');
 
 // Config ==============================================================================
 
-mongoose.connect(config.database);
+let database = 'mongodb://'+config.db.host+':'+config.db.host
+mongoose.connect(database);
 
 var app = express();
-var port = process.env.PORT || 8080;
+var port = config.app.port
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
