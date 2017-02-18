@@ -2,15 +2,8 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt-nodejs');
 
 var UserSchema = new mongoose.Schema({
-	name: { type: String, required: true }, 
-	password: { type: String, required: true },
-	age: { type: Number, required: true },
-	gender: { type: String, required: true },
-	note: String,		// A public note that is shown on the radar
-	latitude: Number,
-	longitude: Number,
-	lastupdate: Date,	// When was the location last updated?
-	following:  []		// Append all the followed friends to a list (for now)
+	id: { type: Number, required: true }, 
+	password: { type: String, required: true }
 });
 
 // Always called before user.save()

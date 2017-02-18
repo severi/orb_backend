@@ -14,57 +14,43 @@ services:
   # location_db:
   #   image: "redis:alpine"
 
-  # user_information_service:
-  #   env_file:
-  #     - local.env
-  #   build: user_information_service/
-  #   ports:
-  #    - "5001:8080"
-  #   volumes:
-  #    - ./user_information_service:/code
-  #    - /code/node_modules
-  #   depends_on:
-  #     - user_information_db
-  # user_information_db:
-  #   image: "mongo:3.0.14"
-
-  # authentication_service:
-  #   env_file:
-  #     - local.env
-  #   build: authentication_service/
-  #   ports:
-  #    - "5002:8080"
-  #   volumes:
-  #    - ./authentication_service:/code
-  #    - /code/node_modules
-  #   depends_on:
-  #     - authentication_db
-  # authentication_db:
-  #   image: "mongo:3.0.14"
-
-  # registration_service:
-  #   env_file:
-  #     - local.env
-  #   build: registration_service/
-  #   ports:
-  #    - "5003:8080"
-  #   volumes:
-  #    - ./registration_service:/code
-  #    - /code/node_modules
-  #   depends_on:
-  #     - authentication_service
-  #     - user_information_service
-
-  orb-api:
+  user_information_service:
     env_file:
       - local.env
-    build: orb-api/
+    build: user_information_service/
+    ports:
+     - "5001:8080"
+    volumes:
+     - ./user_information_service:/code
+     - /code/node_modules
+    depends_on:
+      - user_information_db
+  user_information_db:
+    image: "mongo:3.0.14"
+
+  authentication_service:
+    env_file:
+      - local.env
+    build: authentication_service/
+    ports:
+     - "5002:8080"
+    volumes:
+     - ./authentication_service:/code
+     - /code/node_modules
+    depends_on:
+      - authentication_db
+  authentication_db:
+    image: "mongo:3.0.14"
+
+  user_registration_service:
+    env_file:
+      - local.env
+    build: user_registration_service/
     ports:
      - "8080:8080"
     volumes:
-     - ./orb-api:/code
+     - ./user_registration_service:/code
      - /code/node_modules
     depends_on:
-      - orb-db
-  orb-db:
-    image: "mongo:3.0.14"
+      - authentication_service
+      - user_information_service

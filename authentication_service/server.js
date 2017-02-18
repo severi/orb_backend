@@ -30,20 +30,15 @@ app.use('/', router);
 
 // NOTE: Add 'checkAccess' method to the route chain to require JWT authorization
 
-router.route('/')							// index page
+router.route('/test')							// index page
 	.get(generalCtrl.getIndex);
 
-router.route('/auth')						// auhtorize user and return token
+router.route('/authenticate')				// auhtorize user and return token
 	.post(generalCtrl.postAuth);
 
-router.route('/api/users')					// Fetch and create users
-	.get(checkAccess, userCtrl.getUsers)
+router.route('/create_user')
 	.post(userCtrl.postUser)
 
-router.route('/api/users/:id')				// Manipulate existing users
-	.get(checkAccess, userCtrl.getUser)
-	.delete(checkAccess, userCtrl.deleteUser)
-	.put(checkAccess, userCtrl.putUser);
 
 // Server Start ========================================================================
 
