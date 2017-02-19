@@ -6,5 +6,9 @@ module.exports = {
 	},
 	'app': {
 		'port': 8080
+	},
+	'cache': {
+		'TTL_enabled': (process.env.LOCATION_TTL_ENABLED == 'true'),
+		'TTL': 10
 	}
 };

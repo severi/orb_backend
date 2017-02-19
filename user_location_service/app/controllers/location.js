@@ -3,7 +3,6 @@ var config = require('../../config');
 
 var client = redis.createClient(config.db.port, config.db.host);
 
-
 function populateModel(req) {
   user = {}
   user.latitude = req.body.latitude;
@@ -24,5 +23,8 @@ exports.getLocation = function(req, res) {
 exports.setLocation = function(req, res) {
   let user = populateModel(req);
   client.set(req.params.id, JSON.stringify(user))
+  if (config.cache.TTL_enabled){
+      client.expire(req.params.id, config.cache.TTL)
+  }
   res.json({ message: 'Location set!', data: user});
 };
