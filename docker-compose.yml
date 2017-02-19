@@ -1,18 +1,18 @@
 version: '3'
 services:
-  # location_service:
-  #   env_file:
-  #     - local.env
-  #   build: location_service/
-  #   ports:
-  #    - "5000:8080"
-  #   volumes:
-  #    - ./location_service:/code
-  #    - /code/node_modules
-  #   depends_on:
-  #     - location_db
-  # location_db:
-  #   image: "redis:alpine"
+  user_location_service:
+    env_file:
+      - local.env
+    build: user_location_service/
+    ports:
+     - "5000:8080"
+    volumes:
+     - ./user_location_service:/code
+     - /code/node_modules
+    depends_on:
+      - user_location_db
+  user_location_db:
+    image: "redis:alpine"
 
   user_information_service:
     env_file:

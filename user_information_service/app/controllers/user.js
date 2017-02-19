@@ -1,7 +1,6 @@
 var User = require('../models/user');
 
-// var userExcludes = { 'password': 0, '__v': 0, 'following': 0 };
-var userExcludes = {};
+var userExcludes = { 'id': 0, '__v': 0};
 
 function populateModel(req, userModel) {
   userModel.id = req.body.id;
@@ -13,7 +12,6 @@ function populateModel(req, userModel) {
   return userModel;
 }
 
-// GET /api/users
 exports.getUsers = function(req, res) {
   User.find({}, userExcludes, function(err, users) {
     if (err)
@@ -23,7 +21,6 @@ exports.getUsers = function(req, res) {
   });
 };
 
-// GET A SINGLE /api/users/:id
 exports.getUser = function(req, res) {
   User.findById(req.params.id, userExcludes, function(err, user) {
     if (err)
@@ -33,7 +30,6 @@ exports.getUser = function(req, res) {
   });
 };
 
-// POST /api/users
 exports.postUser = function(req, res) {
   var user = new User();
   user = populateModel(req, user);
@@ -44,13 +40,11 @@ exports.postUser = function(req, res) {
       console.log(err);
       return res.send(err);
     }
-
-    console.log("toimii")
+    
     res.json({ message: 'New User added!', data: user });
   });
 };
 
-// PUT /api/users
 exports.putUser = function (req, res) {
     User.update({_id: req.params.id}, req.body, function (err, user) {
       if (err)
@@ -60,7 +54,6 @@ exports.putUser = function (req, res) {
     });
 };
 
-// DELETE /api/users
 exports.deleteUser = function(req, res) {
   User.findByIdAndRemove(req.params.id, function(err) {
     if (err)

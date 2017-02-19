@@ -27,8 +27,6 @@ function getUserInformationConfig(token) {
 }
 
 function createUser(user){
-  console.log("heiiiiiii1")
-  console.log(user.email)
   axios.post('/api/users', {
     id : user.id,
     name : user.name,
@@ -47,7 +45,6 @@ function createUser(user){
 }
 
 function createUserAuthentication(user){
-  console.log("heiiiiiii2")
   axios.post('/create_user', {
     id: user.id,
     password: user.password
@@ -60,10 +57,7 @@ function createUserAuthentication(user){
     return error  });
 }
 
-
-// POST /api/users
 exports.registerUser = function(req, res) {
-  console.log("hei")
   axios.all([createUserAuthentication(req.body), createUser(req.body)])
   .then(axios.spread(function (acct, perms) {
     res.json({ message: 'New User added!' });
