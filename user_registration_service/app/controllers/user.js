@@ -1,4 +1,4 @@
-var axios   = require('axios');
+import axios from 'axios';
 
 function getAuthConfig(token) {
   let config = {
@@ -36,12 +36,8 @@ function createUser(user){
     email: user.email
   },
   getUserInformationConfig())
-  .then(function (response) {
-    return response
-  })
-  .catch(function (error) {
-    return error
-  });
+  .then(response => response)
+  .catch(error => error);
 }
 
 function createUserAuthentication(user){
@@ -50,16 +46,13 @@ function createUserAuthentication(user){
     password: user.password
   },
   getAuthConfig())
-  .then(function (response) {
-    return response
-  })
-  .catch(function (error) {
-    return error  });
+  .then(response => response)
+  .catch(error => error);
 }
 
-exports.registerUser = function(req, res) {
+export function registerUser(req, res) {
   axios.all([createUserAuthentication(req.body), createUser(req.body)])
-  .then(axios.spread(function (acct, perms) {
+  .then(axios.spread((acct, perms) => {
     res.json({ message: 'New User added!' });
   }));
-};
+}
