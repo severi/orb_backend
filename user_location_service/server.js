@@ -1,18 +1,16 @@
-var express 	= require('express');
-var bodyParser  = require('body-parser');
-var bcrypt = require('bcrypt-nodejs');
-var expressJwt = require('express-jwt');
-
-var config = require('./config');
-var locationCtrl = require('./app/controllers/location');
-var generalCtrl = require('./app/controllers/general');
-
-var timers = require('timers')
+import express from 'express';
+import bodyParser from 'body-parser';
+import bcrypt from 'bcrypt-nodejs';
+import expressJwt from 'express-jwt';
+import config from './config';
+import {getNearbyUsers, removeExpiredLocations, getLocation, setLocation} from './app/controllers/location';
+import {getIndex} from './app/controllers/general';
+import timers from 'timers';
 
 // Config ==============================================================================
 
-var app = express();
-var port = config.app.port
+const app = express();
+const port = config.app.port;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -21,25 +19,25 @@ app.set('secret', config.secret);
 
 // Routes ==============================================================================
 
-var router = express.Router();
-var checkAccess = expressJwt({secret: app.get('secret')});
+const router = express.Router();
+const checkAccess = expressJwt({secret: app.get('secret')});
 
 app.use('/', router);
 
 router.route('/test')
-	.get(generalCtrl.getIndex);
+	.get(getIndex);
 
 router.route('/user/location/:id')
-	.get(checkAccess, locationCtrl.getLocation)
-	.post(checkAccess, locationCtrl.setLocation);
+	.get(checkAccess, getLocation)
+	.post(checkAccess, setLocation);
 
 router.route('/user/nearby/:id')
-	.get(checkAccess, locationCtrl.getNearbyUsers);
+	.get(checkAccess, getNearbyUsers);
 
 // Server Start ========================================================================
 
 app.listen(port);
 console.log('Serving on http://localhost:' + port);
 if (config.cache.TTL_enabled){
-    timers.setInterval(locationCtrl.removeExpiredLocations, 2*1000)
+    timers.setInterval(removeExpiredLocations, 2*1000)
 }
