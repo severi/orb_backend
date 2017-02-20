@@ -1,6 +1,6 @@
-var User = require('../models/user');
+import User from '../models/user';
 
-var userExcludes = { 'id': 0, '__v': 0};
+const userExcludes = { 'id': 0, '__v': 0};
 
 function populateModel(req, userModel) {
   userModel.id = req.body.id;
@@ -12,29 +12,29 @@ function populateModel(req, userModel) {
   return userModel;
 }
 
-exports.getUsers = function(req, res) {
-  User.find({}, userExcludes, function(err, users) {
+export function getUsers(req, res) {
+  User.find({}, userExcludes, (err, users) => {
     if (err)
       return res.send(err);
 
     res.json(users);
   });
-};
+}
 
-exports.getUser = function(req, res) {
-  User.findById(req.params.id, userExcludes, function(err, user) {
+export function getUser(req, res) {
+  User.findById(req.params.id, userExcludes, (err, user) => {
     if (err)
       return res.send(err);
 
     res.json(user);
   });
-};
+}
 
-exports.postUser = function(req, res) {
-  var user = new User();
+export function postUser(req, res) {
+  let user = new User();
   user = populateModel(req, user);
 
-  user.save(function(err) {
+  user.save(err => {
     if (err) {
       console.log("VIRHE");
       console.log(err);
@@ -43,22 +43,22 @@ exports.postUser = function(req, res) {
     
     res.json({ message: 'New User added!', data: user });
   });
-};
+}
 
-exports.putUser = function (req, res) {
-    User.update({_id: req.params.id}, req.body, function (err, user) {
+export function putUser(req, res) {
+    User.update({_id: req.params.id}, req.body, (err, user) => {
       if (err)
         return res.send(err);
 
       res.json({ message: 'User Details updated!', data: user });
     });
-};
+}
 
-exports.deleteUser = function(req, res) {
-  User.findByIdAndRemove(req.params.id, function(err) {
+export function deleteUser(req, res) {
+  User.findByIdAndRemove(req.params.id, err => {
     if (err)
       return res.send(err);
 
     res.json({ message: 'User deleted!' });
   });
-};
+}

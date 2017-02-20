@@ -1,20 +1,19 @@
-var express 	= require('express');
-var bodyParser  = require('body-parser');
-var mongoose    = require('mongoose');
-var bcrypt = require('bcrypt-nodejs');
-var expressJwt = require('express-jwt');
-
-var config = require('./config');
-var userCtrl = require('./app/controllers/user');
-var generalCtrl = require('./app/controllers/general');
+import express from 'express';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt-nodejs';
+import expressJwt from 'express-jwt';
+import config from './config';
+import {getUsers, getUser, postUser, deleteUser, putUser} from './app/controllers/user';
+import {getIndex} from './app/controllers/general';
 
 // Config ==============================================================================
 
-let database = 'mongodb://'+config.db.host+':'+config.db.host
+const database = 'mongodb://'+config.db.host+':'+config.db.host
 mongoose.connect(database);
 
-var app = express();
-var port = config.app.port
+const app = express();
+const port = config.app.port;
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -23,24 +22,22 @@ app.set('secret', config.secret);
 
 // Routes ==============================================================================
 
-var router = express.Router();
-var checkAccess = expressJwt({secret: app.get('secret')});
+const router = express.Router();
+const checkAccess = expressJwt({secret: app.get('secret')});
 
 app.use('/', router);
 
-// NOTE: Add 'checkAccess' method to the route chain to require JWT authorization
+router.route('/test')	
+	.get(getIndex);
 
-router.route('/test')							// index page
-	.get(generalCtrl.getIndex);
+router.route('/api/users')
+	.get(checkAccess, getUsers)
+	.post(postUser)
 
-router.route('/api/users')					// Fetch and create users
-	.get(checkAccess, userCtrl.getUsers)
-	.post(userCtrl.postUser)
-
-router.route('/api/users/:id')				// Manipulate existing users
-	.get(checkAccess, userCtrl.getUser)
-	.delete(checkAccess, userCtrl.deleteUser)
-	.put(checkAccess, userCtrl.putUser);
+router.route('/api/users/:id')
+	.get(checkAccess, getUser)
+	.delete(checkAccess, deleteUser)
+	.put(checkAccess, putUser);
 
 // Server Start ========================================================================
 
