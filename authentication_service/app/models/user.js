@@ -1,22 +1,22 @@
-var mongoose = require('mongoose');
-var bcrypt = require('bcrypt-nodejs');
+import mongoose from 'mongoose';
+import bcrypt from 'bcrypt-nodejs';
 
-var UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
 	id: { type: Number, required: true }, 
 	password: { type: String, required: true }
 });
 
 // Always called before user.save()
 UserSchema.pre('save', function(callback) {
-  var user = this;
+  const user = this;
 
   if (!user.isModified('password')) return callback();
 
   	// If the password is modified, we need to hash it again, then save
-  	bcrypt.genSalt(10, function(err, salt) {
+  	bcrypt.genSalt(10, (err, salt) => {
     if (err) return callback(err);
 
-    bcrypt.hash(user.password, salt, null, function(err, hash) {
+    bcrypt.hash(user.password, salt, null, (err, hash) => {
       if (err) return callback(err);
       user.password = hash;
       callback();
@@ -31,4 +31,4 @@ UserSchema.methods.verifyPassword = function(password) {
 };
 
 // Export the Mongoose model
-module.exports = mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);
