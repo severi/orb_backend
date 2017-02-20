@@ -7,6 +7,8 @@ var config = require('./config');
 var locationCtrl = require('./app/controllers/location');
 var generalCtrl = require('./app/controllers/general');
 
+var timers = require('timers')
+
 // Config ==============================================================================
 
 var app = express();
@@ -31,7 +33,13 @@ router.route('/user/location/:id')
 	.get(checkAccess, locationCtrl.getLocation)
 	.post(checkAccess, locationCtrl.setLocation);
 
+router.route('/user/nearby/:id')
+	.get(checkAccess, locationCtrl.getNearbyUsers);
+
 // Server Start ========================================================================
 
 app.listen(port);
 console.log('Serving on http://localhost:' + port);
+if (config.cache.TTL_enabled){
+    timers.setInterval(locationCtrl.removeExpiredLocations, 2*1000)
+}

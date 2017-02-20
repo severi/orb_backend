@@ -8,10 +8,11 @@
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "express-jwt": "^3.3.0",
+    "georedis": "^3.0.3",
     "jsonwebtoken": "^5.4.1",
     "marked": "^0.3.5",
-    "redis": "^2.6.5",
-    "nodemon": "^1.8.1"
+    "nodemon": "^1.8.1",
+    "redis": "^2.6.5"
   },
   "devDependencies": {},
   "scripts": {
