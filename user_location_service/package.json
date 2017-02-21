@@ -8,6 +8,7 @@
     "body-parser": "^1.14.1",
     "express": "^4.13.3",
     "express-jwt": "^3.3.0",
+    "geolib": "^2.0.22",
     "georedis": "^3.0.4",
     "jsonwebtoken": "^5.4.1",
     "marked": "^0.3.5",

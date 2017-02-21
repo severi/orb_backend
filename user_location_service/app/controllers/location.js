@@ -1,7 +1,8 @@
 
-import config from '../../config';
-import redis from 'redis';
+import config from '../../config'
+import redis from 'redis'
 import georedis from 'georedis'
+import geolib from 'geolib'
 
 const client = redis.createClient(config.db.port, config.db.host);
 const geo = georedis.initialize(client, {
@@ -17,6 +18,24 @@ function populateModel(req) {
   return user;
 }
 
+
+function transformLocations(userId, locations) {
+  let user_location = locations.filter(obj => obj.key == userId)[0]
+  locations = locations.filter(obj => obj.key !== userId).map(obj =>
+  {
+    let bearing = geolib.getBearing(
+      {latitude: user_location.latitude, longitude: user_location.longitude},
+      {latitude: obj.latitude, longitude: obj.longitude}
+    )
+    return {
+      id: obj.key,
+      distance: obj.distance,
+      bearing: bearing
+    }
+  })
+
+  return locations
+}
 
 export function getNearbyUsers(req, res) {
   const options = {
@@ -34,8 +53,8 @@ export function getNearbyUsers(req, res) {
       console.error(err)
       return res.send(err);
     }
-    locations = locations.filter(obj => obj.key !== req.params.id); // filter out user's own location
-    res.json(locations)
+    let transformedLocations = transformLocations(req.params.id, locations)
+    res.json(transformedLocations)
   })
 }
 
@@ -85,11 +104,17 @@ export function getLocation(req, res) {
   })
 }
 
+function addTmpLocations(user) {
+  geo.addLocation(123457, {latitude: 37.406366, longitude: -121.939781});
+  // geo.addLocation(9, {latitude: user.latitude, longitude: user.longitude+1});
+  // geo.addLocation(99, {latitude: user.latitude+1, longitude: user.longitude+1});
+}
+
 export function setLocation(req, res) {
   let user = populateModel(req);
+  addTmpLocations(user);
 
   client.zadd("TTL", user.timestamp, req.params.id);
-
   geo.addLocation(req.params.id, {latitude: user.latitude, longitude: user.longitude}, (err, reply) => {
     if(err) {
       console.error(err)
