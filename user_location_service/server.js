@@ -39,5 +39,5 @@ router.route('/user/nearby/:id')
 app.listen(port);
 console.log('Serving on http://localhost:' + port);
 if (config.cache.TTL_enabled){
-    timers.setInterval(removeExpiredLocations, 2*1000)
+    timers.setInterval(removeExpiredLocations, config.cache.checkForExpiredEntriesInterval)
 }

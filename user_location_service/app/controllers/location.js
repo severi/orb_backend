@@ -59,33 +59,27 @@ export function getNearbyUsers(req, res) {
 }
 
 export function removeExpiredLocations() {
-  let expiredDateLimit = Date.now() - (config.cache.TTL*1000);
+  let expiredDateLimit = Date.now() - (config.cache.TTL);
 
-  client.zrangebyscore('TTL', '-inf', expiredDateLimit, (err, reply) => {
+  client.zrangebyscore('TTL', '-inf', expiredDateLimit, (err, expiredLocationEntries) => {
     if (err) {
       console.log(err)
       return;
     }
-    if (reply.length == 0){
-      console.log("nothing to remove");
+    if (expiredLocationEntries.length == 0){
       return;
     }
-    console.log("moi")
-    console.log(reply);
-    console.log("hei")
-    geo.removeLocations(reply, (err1, reply1) => {
-      if (err1){
-        console.log(err1);
+    geo.removeLocations(expiredLocationEntries, (removeLocationsError, removeLocationsReply) => {
+      if (removeLocationsError){
+        console.log(removeLocationsError);
         return;
       }
-      console.log("deleted");
-      console.log(reply1);
-      client.zremrangebyscore('TTL', '-inf', expiredDateLimit, (err2, reply2) => {
-        if (err2){
-          console.log(err2);
+      client.zremrangebyscore('TTL', '-inf', expiredDateLimit, (zremrangebyscoreError, zremrangebyscoreReply) => {
+        if (zremrangebyscoreError){
+          console.log(zremrangebyscoreError);
           return;
         }
-        console.log("EVERYTHING DELETED");
+        console.log("deleted expired location entries")
       });
     });
   });
