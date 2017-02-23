@@ -13,6 +13,7 @@ function populateModel(req, userModel) {
 }
 
 export function getUsers(req, res) {
+  console.log("getting users")
   User.find({}, userExcludes, (err, users) => {
     if (err)
       return res.send(err);
@@ -40,7 +41,7 @@ export function postUser(req, res) {
       console.log(err);
       return res.send(err);
     }
-    
+
     res.json({ message: 'New User added!', data: user });
   });
 }

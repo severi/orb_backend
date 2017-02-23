@@ -27,11 +27,11 @@ app.use('/', router);
 router.route('/test')
 	.get(getIndex);
 
-router.route('/user/location/:id')
+router.route('/location/:id')
 	.get(checkAccess, getLocation)
 	.post(checkAccess, setLocation);
 
-router.route('/user/nearby/:id')
+router.route('/location/nearby/:id')
 	.get(checkAccess, getNearbyUsers);
 
 // Server Start ========================================================================

@@ -26,13 +26,10 @@ let router = express.Router();
 let checkAccess = expressJwt({secret: app.get('secret')});
 
 app.use('/', router);
-router.route('/test')
-	.get(getIndex);
-
-router.route('/authenticate')
+router.route('/authenticate/auth')
 	.post(postAuth);
 
-router.route('/create_user')
+router.route('/authenticate/create_user')
 	.post(postUser)
 
 

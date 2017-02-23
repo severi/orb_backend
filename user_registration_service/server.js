@@ -23,11 +23,6 @@ const checkAccess = expressJwt({secret: app.get('secret')});
 
 app.use('/', router);
 
-// NOTE: Add 'checkAccess' method to the route chain to require JWT authorization
-
-router.route('/test')							// index page
-	.get(getIndex);
-
 router.route('/register')
 	.post(registerUser)
 

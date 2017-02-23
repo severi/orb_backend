@@ -27,14 +27,11 @@ const checkAccess = expressJwt({secret: app.get('secret')});
 
 app.use('/', router);
 
-router.route('/test')	
-	.get(getIndex);
-
-router.route('/api/users')
+router.route('/users/')
 	.get(checkAccess, getUsers)
 	.post(postUser)
 
-router.route('/api/users/:id')
+router.route('/users/:id')
 	.get(checkAccess, getUser)
 	.delete(checkAccess, deleteUser)
 	.put(checkAccess, putUser);

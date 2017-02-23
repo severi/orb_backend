@@ -27,7 +27,7 @@ function getUserInformationConfig(token) {
 }
 
 function createUser(user){
-  axios.post('/api/users', {
+  axios.post('/users', {
     id : user.id,
     name : user.name,
     age : user.age,
@@ -41,7 +41,7 @@ function createUser(user){
 }
 
 function createUserAuthentication(user){
-  axios.post('/create_user', {
+  axios.post('/authenticate/create_user', {
     id: user.id,
     password: user.password
   },

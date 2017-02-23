@@ -79,7 +79,7 @@ export function removeExpiredLocations() {
           console.log(zremrangebyscoreError);
           return;
         }
-        console.log("deleted expired location entries")
+        console.log("deleted expired location entries: "+expiredLocationEntries.length)
       });
     });
   });
@@ -100,14 +100,14 @@ export function getLocation(req, res) {
 
 function addTmpLocations(user) {
   geo.addLocation(123457, {latitude: 37.406366, longitude: -121.939781});
+  client.zadd("TTL", user.timestamp, 123457);
   // geo.addLocation(9, {latitude: user.latitude, longitude: user.longitude+1});
   // geo.addLocation(99, {latitude: user.latitude+1, longitude: user.longitude+1});
 }
 
 export function setLocation(req, res) {
   let user = populateModel(req);
-  addTmpLocations(user);
-
+  // addTmpLocations(user);
   client.zadd("TTL", user.timestamp, req.params.id);
   geo.addLocation(req.params.id, {latitude: user.latitude, longitude: user.longitude}, (err, reply) => {
     if(err) {

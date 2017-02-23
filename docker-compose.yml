@@ -4,8 +4,6 @@ services:
     env_file:
       - local.env
     build: user_location_service/
-    ports:
-     - "5000:8080"
     volumes:
      - ./user_location_service:/code
      - /code/node_modules
@@ -18,8 +16,6 @@ services:
     env_file:
       - local.env
     build: user_information_service/
-    ports:
-     - "5001:8080"
     volumes:
      - ./user_information_service:/code
      - /code/node_modules
@@ -32,8 +28,6 @@ services:
     env_file:
       - local.env
     build: authentication_service/
-    ports:
-     - "5002:8080"
     volumes:
      - ./authentication_service:/code
      - /code/node_modules
@@ -46,11 +40,22 @@ services:
     env_file:
       - local.env
     build: user_registration_service/
-    ports:
-     - "8080:8080"
     volumes:
      - ./user_registration_service:/code
      - /code/node_modules
     depends_on:
       - authentication_service
       - user_information_service
+
+  proxy:
+    build: proxy/
+    ports:
+     - "8080:8080"
+     - "88:88"
+    volumes:
+     - ./proxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+      - user_location_service
+      - authentication_service
+      - user_information_service
+      - user_registration_service
