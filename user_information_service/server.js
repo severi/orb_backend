@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt-nodejs';
-import expressJwt from 'express-jwt';
+import jwt from 'express-jwt';
 import config from './config';
 import {getUsers, getUser, postUser, deleteUser, putUser} from './app/controllers/user';
 import {getIndex} from './app/controllers/general';
@@ -23,7 +23,7 @@ app.set('secret', config.secret);
 // Routes ==============================================================================
 
 const router = express.Router();
-const checkAccess = expressJwt({secret: app.get('secret')});
+const checkAccess = jwt({secret: app.get('secret')});
 
 app.use('/', router);
 

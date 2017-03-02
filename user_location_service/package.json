@@ -13,7 +13,8 @@
     "jsonwebtoken": "^5.4.1",
     "marked": "^0.3.5",
     "nodemon": "^1.8.1",
-    "redis": "^2.6.5"
+    "redis": "^2.6.5",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
