@@ -3,7 +3,8 @@ import bodyParser from 'body-parser'
 import mongoose	from 'mongoose'
 import bcrypt from 'bcrypt-nodejs'
 import jwt from 'express-jwt'
-
+import uuid from 'uuid'
+import winston from 'winston'
 import config from './config'
 import {getIndex, postAuth, postUser} from './app/controllers/main'
 
@@ -15,6 +16,26 @@ mongoose.connect(database);
 let app = express();
 const port = config.app.port
 
+winston.level = config.logger.level;
+const correlationId = function (req, res, next) {
+  let correlationId = req.get("x-correlation-id");
+  if (correlationId == undefined){
+    correlationId = uuid.v1()
+    req.headers["x-correlation-id"] = correlationId
+  }
+  console.log(req.url)
+  console.log(req.method)
+  next()
+}
+
+const requestLogger = function (req, res, next) {
+  let correlationId = req.get("x-correlation-id");
+  winston.debug("Received: "+req.method+" "+req.url+", cid: "+req.get("x-correlation-id"))
+  next()
+}
+
+app.use(correlationId)
+app.use(requestLogger)
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 

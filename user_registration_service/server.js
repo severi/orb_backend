@@ -2,7 +2,8 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import bcrypt from 'bcrypt-nodejs'
 import jwt from 'express-jwt'
-import uuid from 'uuid';
+import uuid from 'uuid'
+import winston from 'winston'
 import config from './config'
 import {registerUser} from './app/controllers/user'
 import {getIndex} from './app/controllers/general'
@@ -12,6 +13,7 @@ import {getIndex} from './app/controllers/general'
 const app = express();
 const port = config.app.port;
 
+winston.level = config.logger.level;
 const correlationId = function (req, res, next) {
   let correlationId = req.get("x-correlation-id");
   if (correlationId == undefined){
@@ -23,7 +25,7 @@ const correlationId = function (req, res, next) {
 
 const requestLogger = function (req, res, next) {
   let correlationId = req.get("x-correlation-id");
-  console.log('Incoming request, cid: '+req.get("x-correlation-id"))
+  winston.debug("Received: "+req.method+" "+req.url+", cid: "+req.get("x-correlation-id"))
   next()
 }
 

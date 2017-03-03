@@ -7,6 +7,9 @@ module.exports = {
   'app': {
     'port': 8080
   },
+  'logger': {
+    'level': process.env.LOG_LEVEL
+  },
 	'cache': {
     'TTL_enabled': (process.env.LOCATION_TTL_ENABLED == 'true'),
     'TTL': process.env.LOCATION_TTL_VALUE_SECONDS*1000,

@@ -6,5 +6,8 @@ module.exports = {
 	},
 	'app': {
 		'port': 8080
-	}
+	},
+  'logger': {
+    'level': process.env.LOG_LEVEL
+  }
 };

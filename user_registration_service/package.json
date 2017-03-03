@@ -12,7 +12,8 @@
     "jsonwebtoken": "^5.4.1",
     "marked": "^0.3.5",
     "nodemon": "^1.8.1",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
