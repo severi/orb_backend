@@ -15,11 +15,12 @@ const port = config.app.port;
 
 winston.level = config.logger.level;
 const correlationId = function (req, res, next) {
-  let correlationId = req.get("x-correlation-id");
+  let correlationId = req.get("x-correlation-id")
   if (correlationId == undefined){
     correlationId = uuid.v1()
     req.headers["x-correlation-id"] = correlationId
   }
+  res.set("x-correlation-id", correlationId)
   next()
 }
 

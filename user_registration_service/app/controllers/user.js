@@ -1,32 +1,51 @@
 import axios from 'axios';
+import winston from 'winston'
 
-function getAuthConfig(token) {
-  let config = {
-    baseURL: 'http://authentication_service:8080',
-    headers: {}
+axios.interceptors.request.use(
+  config => {
+    winston.debug("-->: "+config.method +" "+config.url +", cid: "+config.headers["x-correlation-id"])
+    return config;
+  },
+  error => {
+    winston.warn("error occured")
+    return Promise.reject(error);
   }
-  if (token) {
-    config.headers = {
-      'Authorization': 'Bearer '+token
-    }
+)
+
+axios.interceptors.response.use(
+  response => {
+    winston.debug("<--: "+response.status+" for: "+ response.config.method +" "+response.config.url +", cid: "+response.headers["x-correlation-id"])
+    return response;
+  },
+  error => {
+    winston.warn("error occured")
+    return Promise.reject(error);
+  }
+)
+
+function getBaseConfig(baseUrl, cid){
+  let config = {
+    baseURL: baseUrl,
+    headers: {'x-correlation-id': cid}
   }
   return config;
 }
 
-function getUserInformationConfig(token) {
-  let config = {
-    baseURL: 'http://user_information_service:8080',
-    headers: {}
-  }
-  if (token) {
-    config.headers = {
-      'Authorization': 'Bearer '+token
-    }
-  }
+function getAuthConfig(cid) {
+  const baseUrl = 'http://authentication_service:8080'
+  let config = getBaseConfig(baseUrl, cid)
   return config;
 }
 
-function createUser(user){
+function getUserInformationConfig(cid) {
+  const baseUrl = 'http://user_information_service:8080'
+  let config = getBaseConfig(baseUrl, cid)
+  return config
+}
+
+function createUser(req){
+  let cid = getCorrelationId(req)
+  let user = req.body
   axios.post('/users', {
     id : user.id,
     name : user.name,
@@ -35,23 +54,27 @@ function createUser(user){
     note : user.note,
     email: user.email
   },
-  getUserInformationConfig())
-  .then(response => response)
-  .catch(error => error);
+    getUserInformationConfig(cid)
+  )
 }
 
-function createUserAuthentication(user){
+function createUserAuthentication(req){
+  let cid = getCorrelationId(req)
+  let user = req.body
   axios.post('/authenticate/create_user', {
     id: user.id,
     password: user.password
   },
-  getAuthConfig())
-  .then(response => response)
-  .catch(error => error);
+    getAuthConfig(cid)
+  )
+}
+
+function getCorrelationId(req){
+  return req.get('x-correlation-id')
 }
 
 export function registerUser(req, res) {
-  axios.all([createUserAuthentication(req.body), createUser(req.body)])
+  axios.all([createUserAuthentication(req), createUser(req)])
   .then(axios.spread((acct, perms) => {
     res.json({ message: 'New User added!' });
   }));

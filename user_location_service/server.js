@@ -21,6 +21,7 @@ const correlationId = function (req, res, next) {
     correlationId = uuid.v1()
     req.headers["x-correlation-id"] = correlationId
   }
+  res.set("x-correlation-id", correlationId)
   next()
 }
 
