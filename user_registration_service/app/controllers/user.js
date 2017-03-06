@@ -43,7 +43,11 @@ function getUserInformationConfig(cid) {
   return config
 }
 
-function createUser(req){
+function getCorrelationId(req){
+  return req.get('x-correlation-id')
+}
+
+export function registerUser(req, res) {
   let cid = getCorrelationId(req)
   let user = req.body
   axios.post('/user/user_information', {
@@ -54,27 +58,28 @@ function createUser(req){
     email: user.email
   },
     getUserInformationConfig(cid)
-  )
+  ).then(response => {
+    let userId = response.data._id //TODO: id instead of _id
+    axios.post('/user/authenticate/create_user', {
+      id: userId,
+      password: user.password
+    },
+      getAuthConfig(cid)
+    )
+    .then(authResponse => {
+      winston.info("Cid: "+cid+" New user created successfully")
+      res.send('OK')
+    })
+    .catch(authError => {
+      winston.error("Cid: "+cid+" Error occured when creating new user entry to authentication_service")
+      winston.error("Cid: "+cid+" "+authError)
+      res.status(500).end("Internal Server Error");
+    })
+  })
+  .catch(error => {
+    winston.error("Cid: "+cid+" Error occured when creating new user entry to user_information_service")
+    winston.error("Cid: "+cid+" "+error)
+    res.status(500).end("Internal Server Error");
+  })
 }
 
-function createUserAuthentication(req){
-  let cid = getCorrelationId(req)
-  let user = req.body
-  axios.post('/user/authenticate/create_user', {
-    email: user.email,
-    password: user.password
-  },
-    getAuthConfig(cid)
-  )
-}
-
-function getCorrelationId(req){
-  return req.get('x-correlation-id')
-}
-
-export function registerUser(req, res) {
-  axios.all([createUserAuthentication(req), createUser(req)])
-  .then(axios.spread((acct, perms) => {
-    res.json({ message: 'New User added!' });
-  }));
-}

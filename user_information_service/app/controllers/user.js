@@ -42,7 +42,7 @@ export function postUser(req, res) {
       return res.send(err);
     }
 
-    res.json({ message: 'New User added!', data: user });
+    res.json(user);
   });
 }
 

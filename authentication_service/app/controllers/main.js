@@ -5,17 +5,17 @@ import fs from 'fs'
 import winston from 'winston'
 
 export function postAuth(req, res) {
-  // Checks the email and password from the DB
+  // Checks the id and password from the DB
   // and returns a JWT authorization token on success
   User.findOne({
-      email: req.body.email
+      id: req.body.id
   }, (err, user) => {
     if (err) {
       throw err
     }
     if (user && user.verifyPassword(req.body.password)) {
         // on successful authorizaton, create a new authorization token (JWT) and return it
-        const payload = { user: user.email };
+        const payload = { user: user.id };
         const token = jwt.sign(payload, req.app.get('secret'), {
             expiresIn: 3600     // expires in seconds
         });
@@ -35,7 +35,7 @@ export function postAuth(req, res) {
 
 
 function populateModel(req, userModel) {
-  userModel.email = req.body.email;
+  userModel.id = req.body.id;
   userModel.password = req.body.password;
   return userModel;
 }
