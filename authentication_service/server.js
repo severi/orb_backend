@@ -45,7 +45,7 @@ app.set('secret', config.secret);
 let router = express.Router();
 let checkAccess = jwt({secret: app.get('secret')});
 
-app.use('/', router);
+app.use('/user', router);
 router.route('/authenticate/auth')
 	.post(postAuth);
 

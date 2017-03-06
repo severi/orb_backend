@@ -7,7 +7,7 @@ axios.interceptors.request.use(
     return config;
   },
   error => {
-    winston.warn("error occured")
+    winston.error("error occured")
     return Promise.reject(error);
   }
 )
@@ -18,7 +18,7 @@ axios.interceptors.response.use(
     return response;
   },
   error => {
-    winston.warn("error occured")
+    winston.error("error occured")
     return Promise.reject(error);
   }
 )
@@ -46,7 +46,7 @@ function getUserInformationConfig(cid) {
 function createUser(req){
   let cid = getCorrelationId(req)
   let user = req.body
-  axios.post('/users', {
+  axios.post('/user/user_information', {
     id : user.id,
     name : user.name,
     age : user.age,
@@ -61,7 +61,7 @@ function createUser(req){
 function createUserAuthentication(req){
   let cid = getCorrelationId(req)
   let user = req.body
-  axios.post('/authenticate/create_user', {
+  axios.post('/user/authenticate/create_user', {
     id: user.id,
     password: user.password
   },

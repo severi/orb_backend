@@ -6,7 +6,6 @@ import uuid from 'uuid'
 import winston from 'winston'
 import config from './config'
 import {getNearbyUsers, removeExpiredLocations, getLocation, setLocation} from './app/controllers/location'
-import {getIndex} from './app/controllers/general'
 import timers from 'timers'
 
 // Config ==============================================================================
@@ -43,10 +42,7 @@ app.set('secret', config.secret);
 const router = express.Router();
 const checkAccess = jwt({secret: app.get('secret')});
 
-app.use('/', router);
-
-router.route('/test')
-	.get(getIndex);
+app.use('/user', router);
 
 router.route('/location/:id')
 	.get(checkAccess, getLocation)
