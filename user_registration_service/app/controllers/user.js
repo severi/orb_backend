@@ -47,7 +47,6 @@ function createUser(req){
   let cid = getCorrelationId(req)
   let user = req.body
   axios.post('/user/user_information', {
-    id : user.id,
     name : user.name,
     age : user.age,
     gender : user.gender,
@@ -62,7 +61,7 @@ function createUserAuthentication(req){
   let cid = getCorrelationId(req)
   let user = req.body
   axios.post('/user/authenticate/create_user', {
-    id: user.id,
+    email: user.email,
     password: user.password
   },
     getAuthConfig(cid)

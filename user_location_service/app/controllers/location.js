@@ -1,8 +1,8 @@
-
 import config from '../../config'
 import redis from 'redis'
 import georedis from 'georedis'
 import geolib from 'geolib'
+import winston from 'winston'
 
 const client = redis.createClient(config.db.port, config.db.host);
 const geo = georedis.initialize(client, {
@@ -50,7 +50,7 @@ export function getNearbyUsers(req, res) {
 
   geo.nearby(req.params.id, 5000, options, (err, locations) => {
     if(err) {
-      console.error(err)
+      winston.error(err)
       return res.send(err);
     }
     let transformedLocations = transformLocations(req.params.id, locations)
