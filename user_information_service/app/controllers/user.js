@@ -14,7 +14,7 @@ function populateModel(req, userModel) {
 
 export function getUsers(req, res) {
   console.log("getting users")
-  User.find({}, userExcludes, (err, users) => {
+  User.find(req.query, userExcludes, (err, users) => {
     if (err)
       return res.send(err);
 

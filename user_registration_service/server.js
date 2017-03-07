@@ -5,7 +5,7 @@ import jwt from 'express-jwt'
 import uuid from 'uuid'
 import winston from 'winston'
 import config from './config'
-import {registerUser} from './app/controllers/user'
+import {registerUser, login} from './app/controllers/user'
 
 // Config ==============================================================================
 
@@ -44,6 +44,9 @@ app.use('/user', router);
 
 router.route('/register')
 	.post(registerUser)
+
+router.route('/login')
+  .post(login);
 
 // Server Start ========================================================================
 

@@ -83,3 +83,45 @@ export function registerUser(req, res) {
   })
 }
 
+
+function getUserId(response){
+  return response.data[0]._id //TODO: id instead of _id
+}
+
+export function login(req, res) {
+  let cid = getCorrelationId(req)
+  let user = req.body
+
+  let config = {
+    params: {
+      email: user.email
+    },
+    ...getUserInformationConfig(cid)
+  }
+
+  axios.get('/user/user_information', config)
+  .then(function (response) {
+    let userId = getUserId(response)
+
+    axios.post('/user/authenticate/auth', {
+      id: userId,
+      password: user.password
+    },
+      getAuthConfig(cid)
+    )
+    .then(authResponse => {
+      winston.info("Cid: "+cid+" User autheticated: "+(authResponse.data.success?"success":"failed"))
+      res.json(authResponse.data)
+    })
+    .catch(authError => {
+      winston.error("Cid: "+cid+" "+authError)
+      res.status(500).end("Internal Server Error");
+    })
+
+  })
+  .catch(function (error) {
+    winston.error("Cid: "+cid+" "+error)
+    res.status(500).end("Internal Server Error");
+  });
+}
+
