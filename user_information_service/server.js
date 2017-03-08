@@ -48,7 +48,7 @@ const checkAccess = jwt({secret: app.get('secret')});
 app.use('/user', router);
 
 router.route('/user_information/')
-	.get(getUsers) // TODO: checkaccess, how to authenticate another microservice?
+	.get(checkAccess, getUsers)
 	.post(postUser)
 
 router.route('/user_information/:id')

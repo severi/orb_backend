@@ -1,5 +1,6 @@
-import axios from 'axios';
+import axios from 'axios'
 import winston from 'winston'
+import jwt from 'jsonwebtoken'
 
 axios.interceptors.request.use(
   config => {
@@ -23,23 +24,29 @@ axios.interceptors.response.use(
   }
 )
 
-function getBaseConfig(baseUrl, cid){
+function getBaseConfig(baseUrl, cid, token){
   let config = {
     baseURL: baseUrl,
     headers: {'x-correlation-id': cid}
   }
+  if (token) {
+    config.headers = {
+      'Authorization': 'Bearer '+token,
+      ...config.headers
+    }
+  }
   return config;
 }
 
-function getAuthConfig(cid) {
+function getAuthConfig(cid, token) {
   const baseUrl = 'http://authentication_service:8080'
-  let config = getBaseConfig(baseUrl, cid)
+  let config = getBaseConfig(baseUrl, cid, token)
   return config;
 }
 
-function getUserInformationConfig(cid) {
+function getUserInformationConfig(cid, token) {
   const baseUrl = 'http://user_information_service:8080'
-  let config = getBaseConfig(baseUrl, cid)
+  let config = getBaseConfig(baseUrl, cid, token)
   return config
 }
 
@@ -92,11 +99,16 @@ export function login(req, res) {
   let cid = getCorrelationId(req)
   let user = req.body
 
+  const payload = { type: "internal" };
+  const token = jwt.sign(payload, req.app.get('secret'), {
+    expiresIn: 30     // expires in seconds
+  });
+
   let config = {
     params: {
       email: user.email
     },
-    ...getUserInformationConfig(cid)
+    ...getUserInformationConfig(cid, token)
   }
 
   axios.get('/user/user_information', config)
