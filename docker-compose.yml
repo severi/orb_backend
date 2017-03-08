@@ -1,11 +1,11 @@
 version: '3'
 services:
-  user_location_service:
+  location_service:
     env_file:
       - local.env
-    build: user_location_service/
+    build: location_service/
     volumes:
-     - ./user_location_service:/code
+     - ./location_service:/code
      - /code/node_modules
     depends_on:
       - user_location_db
@@ -55,7 +55,7 @@ services:
     volumes:
      - ./proxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
     depends_on:
-      - user_location_service
+      - location_service
       - authentication_service
       - user_information_service
       - user_registration_service
