@@ -44,11 +44,11 @@ const checkAccess = jwt({secret: app.get('secret')});
 
 app.use('/user', router);
 
-router.route('/location/:id')
+router.route('/location')
 	.get(checkAccess, getLocation)
 	.post(checkAccess, setLocation);
 
-router.route('/location/nearby/:id')
+router.route('/location/nearby')
 	.get(checkAccess, getNearbyUsers);
 
 // Server Start ========================================================================

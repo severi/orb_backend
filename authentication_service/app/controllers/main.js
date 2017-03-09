@@ -15,7 +15,7 @@ export function postAuth(req, res) {
     }
     if (user && user.verifyPassword(req.body.password)) {
         // on successful authorizaton, create a new authorization token (JWT) and return it
-        const payload = { user: user.id };
+        const payload = { id: user.id };
         const token = jwt.sign(payload, req.app.get('secret'), {
             expiresIn: 3600     // expires in seconds
         });

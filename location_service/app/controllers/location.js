@@ -11,11 +11,11 @@ const geo = georedis.initialize(client, {
 });
 
 function populateModel(req) {
-  let user = {}
-  user.latitude = req.body.latitude;
-  user.longitude = req.body.longitude;
-  user.timestamp = Date.now();
-  return user;
+  let location = {}
+  location.latitude = req.body.latitude;
+  location.longitude = req.body.longitude;
+  location.timestamp = Date.now();
+  return location;
 }
 
 
@@ -37,7 +37,12 @@ function transformLocations(userId, locations) {
   return locations
 }
 
+function extractUserId(req){
+  return req.user.id
+}
+
 export function getNearbyUsers(req, res) {
+  const userId = extractUserId(req)
   const options = {
     withCoordinates: true, // Will provide coordinates with locations, default false
     withHashes: false, // Will provide a 52bit Geohash Integer, default false
@@ -48,12 +53,12 @@ export function getNearbyUsers(req, res) {
     accurate: false // Useful if in emulated mode and accuracy is important, default false
   };
 
-  geo.nearby(req.params.id, 5000, options, (err, locations) => {
+  geo.nearby(userId, 5000, options, (err, locations) => {
     if(err) {
       winston.error(err)
       return res.send(err);
     }
-    let transformedLocations = transformLocations(req.params.id, locations)
+    let transformedLocations = transformLocations(userId, locations)
     res.json(transformedLocations)
   })
 }
@@ -63,7 +68,7 @@ export function removeExpiredLocations() {
 
   client.zrangebyscore('TTL', '-inf', expiredDateLimit, (err, expiredLocationEntries) => {
     if (err) {
-      console.log(err)
+      winston.error(err)
       return;
     }
     if (expiredLocationEntries.length == 0){
@@ -71,15 +76,15 @@ export function removeExpiredLocations() {
     }
     geo.removeLocations(expiredLocationEntries, (removeLocationsError, removeLocationsReply) => {
       if (removeLocationsError){
-        console.log(removeLocationsError);
+        winston.error(removeLocationsError);
         return;
       }
       client.zremrangebyscore('TTL', '-inf', expiredDateLimit, (zremrangebyscoreError, zremrangebyscoreReply) => {
         if (zremrangebyscoreError){
-          console.log(zremrangebyscoreError);
+          winston.error(zremrangebyscoreError);
           return;
         }
-        console.log("deleted expired location entries: "+expiredLocationEntries.length)
+        winston.info("deleted expired location entries: "+expiredLocationEntries.length)
       });
     });
   });
@@ -87,13 +92,12 @@ export function removeExpiredLocations() {
 }
 
 export function getLocation(req, res) {
-  geo.location(req.params.id, (err, location) => {
+  const userId = extractUserId(req)
+  geo.location(userId, (err, location) => {
     if(err) {
-      console.log("error")
-      console.error(err)
+      winston.error(err)
       return res.send(err);
     }
-    console.log(location)
     return res.json(location);
   })
 }
@@ -101,19 +105,26 @@ export function getLocation(req, res) {
 function addTmpLocations(user) {
   geo.addLocation(123457, {latitude: 37.406366, longitude: -121.939781});
   client.zadd("TTL", user.timestamp, 123457);
-  // geo.addLocation(9, {latitude: user.latitude, longitude: user.longitude+1});
-  // geo.addLocation(99, {latitude: user.latitude+1, longitude: user.longitude+1});
+  geo.addLocation(9, {latitude: user.latitude, longitude: user.longitude+1});
+  client.zadd("TTL", user.timestamp, 9);
+  geo.addLocation(99, {latitude: user.latitude+1, longitude: user.longitude+1});
+  client.zadd("TTL", user.timestamp, 99);
+
+  // should not be visible
+  geo.addLocation(6, {latitude: 17.406366, longitude: -21.939781});
+  client.zadd("TTL", user.timestamp, 6);
 }
 
 export function setLocation(req, res) {
-  let user = populateModel(req);
-  // addTmpLocations(user);
-  client.zadd("TTL", user.timestamp, req.params.id);
-  geo.addLocation(req.params.id, {latitude: user.latitude, longitude: user.longitude}, (err, reply) => {
+  const userId = extractUserId(req)
+  let location = populateModel(req);
+  addTmpLocations(location);
+  client.zadd("TTL", location.timestamp, userId);
+  geo.addLocation(userId, {latitude: location.latitude, longitude: location.longitude}, (err, reply) => {
     if(err) {
-      console.error(err)
-      return res.send(err);
+      winston.error(err)
+      return res.send(err)
     }
-    return res.json(reply);
-  });
+    return res.json(reply)
+  })
 }
