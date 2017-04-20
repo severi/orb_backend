@@ -48,4 +48,3 @@ services:
       - location_service
       - authentication_service
       - user_service
-      - user_registration_service
