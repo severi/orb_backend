@@ -7,6 +7,7 @@ import uuid from 'uuid'
 import winston from 'winston'
 import config from './config'
 import {getUsers, getUser, postUser, deleteUser, putUser} from './app/controllers/user'
+import {registerUser, login} from './app/controllers/authentication'
 
 // Config ==============================================================================
 
@@ -49,12 +50,17 @@ app.use('/user', router);
 
 router.route('/user_information/')
 	.get(checkAccess, getUsers)
-	.post(postUser)
 
 router.route('/user_information/:id')
 	.get(checkAccess, getUser)
 	.delete(checkAccess, deleteUser)
 	.put(checkAccess, putUser);
+
+router.route('/register')
+  .post(registerUser)
+
+router.route('/login')
+  .post(login);
 
 // Server Start ========================================================================
 

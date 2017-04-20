@@ -12,16 +12,17 @@ services:
   user_location_db:
     image: "redis:alpine"
 
-  user_information_service:
+  user_service:
     env_file:
       - local.env
-    build: user_information_service/
+    build: user_service/
     volumes:
-     - ./user_information_service:/code
+     - ./user_service:/code
      - /code/node_modules
     depends_on:
-      - user_information_db
-  user_information_db:
+      - user_db
+      - authentication_service
+  user_db:
     image: "mongo:3.0.14"
 
   authentication_service:
@@ -36,17 +37,6 @@ services:
   authentication_db:
     image: "mongo:3.0.14"
 
-  user_registration_service:
-    env_file:
-      - local.env
-    build: user_registration_service/
-    volumes:
-     - ./user_registration_service:/code
-     - /code/node_modules
-    depends_on:
-      - authentication_service
-      - user_information_service
-
   proxy:
     build: proxy/
     ports:
@@ -57,5 +47,5 @@ services:
     depends_on:
       - location_service
       - authentication_service
-      - user_information_service
+      - user_service
       - user_registration_service
