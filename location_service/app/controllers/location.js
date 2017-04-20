@@ -42,6 +42,7 @@ function extractUserId(req){
 }
 
 export function getNearbyUsers(req, res) {
+  // addTmpLocations()
   const userId = extractUserId(req)
   const options = {
     withCoordinates: true, // Will provide coordinates with locations, default false
@@ -102,23 +103,34 @@ export function getLocation(req, res) {
   })
 }
 
-function addTmpLocations(user) {
-  geo.addLocation(123457, {latitude: 37.406366, longitude: -121.939781});
-  client.zadd("TTL", user.timestamp, 123457);
-  geo.addLocation(9, {latitude: user.latitude, longitude: user.longitude+1});
-  client.zadd("TTL", user.timestamp, 9);
-  geo.addLocation(99, {latitude: user.latitude+1, longitude: user.longitude+1});
-  client.zadd("TTL", user.timestamp, 99);
+let tmpMultiplier = 0
 
-  // should not be visible
-  geo.addLocation(6, {latitude: 17.406366, longitude: -21.939781});
-  client.zadd("TTL", user.timestamp, 6);
+function addTmpLocations() {
+  let lat = 37.406366+ tmpMultiplier*0.00005
+  console.log(lat)
+  geo.addLocation(1234571, {latitude: lat, longitude: -121.939781})
+  // console.log("SEVERI")
+  // client.zadd("TTL", user.timestamp, 1234571);
+  // geo.addLocation(9, {latitude: 37.406368, longitude: -121.939781});
+  // client.zadd("TTL", user.timestamp, 9);
+  // geo.addLocation(99, {latitude: user.latitude+, longitude: -121.939781});
+  // client.zadd("TTL", user.timestamp, 99);
+
+  // // should not be visible
+  // geo.addLocation(6, {latitude: 17.406366, longitude: -21.939781});
+  // client.zadd("TTL", user.timestamp, 6);
+
+  if (tmpMultiplier>40) {
+    tmpMultiplier--
+  } else {
+    tmpMultiplier++
+  }
 }
 
 export function setLocation(req, res) {
   const userId = extractUserId(req)
   let location = populateModel(req);
-  addTmpLocations(location);
+
   client.zadd("TTL", location.timestamp, userId);
   geo.addLocation(userId, {latitude: location.latitude, longitude: location.longitude}, (err, reply) => {
     if(err) {

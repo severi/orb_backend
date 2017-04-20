@@ -8,6 +8,8 @@ import winston from 'winston'
 import config from './config'
 import {getUsers, getUser, postUser, deleteUser, putUser} from './app/controllers/user'
 import {registerUser, login} from './app/controllers/authentication'
+import {getNearbyUsers} from './app/controllers/location'
+
 
 // Config ==============================================================================
 
@@ -61,6 +63,9 @@ router.route('/register')
 
 router.route('/login')
   .post(login);
+
+router.route('/location/nearby')
+  .get(checkAccess, getNearbyUsers);
 
 // Server Start ========================================================================
 
